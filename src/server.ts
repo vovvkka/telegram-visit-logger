@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import cors from "cors";
-import express, {Request, Response} from 'express';
+import express, { Request, Response } from 'express';
 import fetch from 'node-fetch';
 
 const app = express();
@@ -13,7 +13,7 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
 if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-    console.error('Не заданы TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID в переменных окружения');
+    console.error('Не заданы TELEGRAM_BOT_TOKEN и TELEGRAM_CHAT_ID в переменных окружения');
     process.exit(1);
 }
 
@@ -38,7 +38,7 @@ async function sendTelegramMessage(text: string): Promise<void> {
     const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
     const res = await fetch(url, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             chat_id: TELEGRAM_CHAT_ID,
             text,
@@ -56,22 +56,22 @@ app.post('/log-visit', async (req: Request<{}, {}, VisitPayload>, res: Response)
     try {
         const ip = getClientIp(req);
 
-        const {userAgent} = req.body;
+        const { userAgent } = req.body;
 
-        const now = new Date().toLocaleDateString();
+        const now = new Date().toLocaleString();
 
         const message = `
-        <b>Новый визит</b>
-        Время (UTC): ${now}
-        IP: ${ip}
-        User-Agent: ${userAgent}
-         `.trim();
+<b>Новый визит</b>
+Время (UTC): ${now}
+IP: ${ip}
+User-Agent: ${userAgent}
+    `.trim();
 
         await sendTelegramMessage(message);
-        res.json({status: 'ok'});
+        res.json({ status: 'ok' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({status: 'error'});
+        res.status(500).json({ status: 'error' });
     }
 });
 
