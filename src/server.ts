@@ -1,10 +1,12 @@
 import 'dotenv/config';
+import cors from "cors";
 import express, { Request, Response } from 'express';
 import fetch from 'node-fetch';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
