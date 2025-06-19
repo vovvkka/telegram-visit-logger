@@ -22,6 +22,18 @@ interface VisitPayload {
     referrer?: string;
 }
 
+function getClientIp(req: Request): any {
+    const xForwardedFor = req.headers['x-forwarded-for'];
+    if (typeof xForwardedFor === 'string') {
+        return xForwardedFor.split(',')[0].trim();
+    }
+    if (Array.isArray(xForwardedFor) && xForwardedFor.length > 0) {
+        return xForwardedFor[0].trim();
+    }
+
+    return req.ip;
+}
+
 async function sendTelegramMessage(text: string): Promise<void> {
     const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
     const res = await fetch(url, {
@@ -42,12 +54,15 @@ async function sendTelegramMessage(text: string): Promise<void> {
 
 app.post('/log-visit', async (req: Request<{}, {}, VisitPayload>, res: Response) => {
     try {
-        const ip = 'скрыт'; // IP не раскрываем
+        const ip = getClientIp(req);
 
         const { userAgent, referrer } = req.body;
 
+        const now = new Date().toISOString();
+
         const message = `
 <b>Новый визит</b>
+Время (UTC): ${now}
 IP: ${ip}
 User-Agent: ${userAgent}
 Реферер: ${referrer || 'нет'}
