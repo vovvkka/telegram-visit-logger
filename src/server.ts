@@ -72,7 +72,7 @@ async function sendTelegramMessage(text: string): Promise<void> {
 
     if (!res.ok) {
         const errorText = await res.text();
-        console.error('Ошибка при отправке сообщения в Telegram:', errorText);
+        console.error('Ошибка при отправке сообщения в Telegram: ', errorText);
     }
 }
 
